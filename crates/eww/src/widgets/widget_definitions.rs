@@ -950,7 +950,7 @@ fn build_gtk_event_box(bargs: &mut BuilderArgs) -> Result<gtk::EventBox> {
             }));
         },
         // @prop timeout - timeout of the command. Default: "200ms"
-        // @prop onkeyrelease - command to run when keyboard is clicked
+        // @prop onkeyrelease - command to run when keyboard is clicked. The placeholder `{}` will be replaced by the value
         prop(timeout: as_duration = Duration::from_millis(200), onkeyrelease: as_string) {
             gtk_widget.add_events(gdk::EventMask::KEY_RELEASE_MASK);
             connect_signal_handler!(gtk_widget, gtk_widget.connect_key_release_event(move |_, evt| {
