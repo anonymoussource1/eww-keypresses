@@ -927,13 +927,6 @@ fn build_gtk_event_box(bargs: &mut BuilderArgs) -> Result<gtk::EventBox> {
                 );
                 gtk_widget.drag_source_set_target_list(Some(&TargetList::new(&[target_entry])));
             }
-
-            connect_signal_handler!(gtk_widget, if !dragvalue.is_empty(), gtk_widget.connect_drag_data_get(move |_, _, data, _, _| {
-                match dragtype {
-                    DragEntryType::File => data.set_uris(&[&dragvalue]),
-                    DragEntryType::Text => data.set_text(&dragvalue),
-                };
-            }));
         },
         prop(
             // @prop timeout - timeout of the command. Default: "200ms"
@@ -955,7 +948,18 @@ fn build_gtk_event_box(bargs: &mut BuilderArgs) -> Result<gtk::EventBox> {
                 }
                 glib::Propagation::Proceed
             }));
+        },
+        // @prop timeout - timeout of the command. Default: "200ms"
+        // @prop onkeyrelease - command to run when keyboard is clicked
+        prop(timeout: as_duration = Duration::from_millis(200), onkeyrelease: as_string) {
+            gtk_widget.add_events(gdk::EventMask::KEY_RELEASE_MASK);
+            connect_signal_handler!(gtk_widget, gtk_widget.connect_key_release_event(move |_, evt| {
+                run_command(timeout, &onkeyrelease, &[evt.scancode()]);
+
+                glib::Propagation::Proceed
+            }));
         }
+            
     });
     Ok(gtk_widget)
 }
@@ -1060,7 +1064,7 @@ fn build_gtk_label(bargs: &mut BuilderArgs) -> Result<gtk::Label> {
         // @prop lines - maximum number of lines to display (only works when `limit-width` has a value). A value of -1 (default) disables the limit.
         prop(lines: as_i32 = -1) {
             gtk_widget.set_lines(lines);
-        }
+        },
     });
     Ok(gtk_widget)
 }

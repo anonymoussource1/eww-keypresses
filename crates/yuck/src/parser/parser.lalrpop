@@ -66,3 +66,4 @@ Bool: String = {
 
 
 // vim:shiftwidth=4
+// vim:ft=rust
