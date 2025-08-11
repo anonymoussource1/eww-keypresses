@@ -959,7 +959,7 @@ fn build_gtk_event_box(bargs: &mut BuilderArgs) -> Result<gtk::EventBox> {
                 glib::Propagation::Proceed
             }));
         }
-            
+
     });
     Ok(gtk_widget)
 }
